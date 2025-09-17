@@ -349,6 +349,46 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
 
 
 <main>
+<script>
+(function () {
+  // Ambil "name" dari query (?name=), hash (#name=), atau path (/name=…)
+  function getInvitee() {
+    const href = window.location.href;
+    const url  = new URL(href);
+
+    // 1) querystring
+    let raw = url.searchParams.get('name') || url.searchParams.get('to');
+
+    // 2) hash (#name=…)
+    if (!raw && url.hash) {
+      const m = url.hash.match(/(?:^|[?&])(name|to)=([^&]+)/i);
+      if (m) raw = m[2];
+    }
+
+    // 3) pola /name=… di pathname
+    if (!raw) {
+      const m = location.pathname.match(/(?:^|\/)(?:name|to)=([^/?#]+)/i);
+      if (m) raw = m[1];
+    }
+
+    if (!raw) return "";
+
+    // decode: ganti + jadi spasi, decodeURIComponent, rapikan
+    try { raw = decodeURIComponent(raw.replace(/\+/g, " ")); } catch(e){}
+    raw = raw.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+
+    return raw;
+  }
+
+  const target = document.getElementById('guest');
+  const name = getInvitee();
+
+  if (target && name) {
+    // aman (anti XSS) karena pakai textContent
+    target.textContent = "Kepada Yth. " + name;
+  }
+})();
+</script>
 
 <!-- ===== MUSIC BTN ===== -->
 <button class="music mag" id="musicBtn" aria-label="musik"><i class="fa-solid fa-music"></i></button>
@@ -362,15 +402,16 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
   <div class="gate">
     <div class="ph"></div>
     <div class="ov">
-      <div class="brand ">The Wedding of</div>
-      <div class="names ">ILHAM &amp; SAHITYA</div>
-      <p style="margin:8px 0 0;opacity:.95" class="">Kepada Yth. Bapak/Ibu</p>
+      <div class="brand">The Wedding of</div>
+      <div class="names">ILHAM &amp; SAHITYA</div>
+      <p id="guest" style="margin:8px 0 0;opacity:.95">Kepada Yth. Bapak/Ibu</p>
       <button id="openBtn" class="btn btn-primary ripple mag">
         <i class="fa-solid fa-envelope-open-text"></i> Buka Undangan
       </button>
     </div>
   </div>
 </div>
+
 
 
 
