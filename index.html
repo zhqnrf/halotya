@@ -354,7 +354,7 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
 <button class="music mag" id="musicBtn" aria-label="musik"><i class="fa-solid fa-music"></i></button>
 <audio id="bgm" loop>
   <!-- EDIT DI SINI: musik -->
-  <source src="assets/music/music.mp3" type="audio/mp3"/>
+  <source src="assets/music/musica.mp3" type="audio/mp3"/>
 </audio>
 
 <!-- ===== OPENING GATE ===== -->
@@ -364,7 +364,7 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
     <div class="ov">
       <div class="brand ">The Wedding of</div>
       <div class="names ">ILHAM &amp; SAHITYA</div>
-      <p style="margin:8px 0 0;opacity:.95" class="">Kepada Yth.</p>
+      <p style="margin:8px 0 0;opacity:.95" class="">Kepada Yth. Bapak/Ibu</p>
       <button id="openBtn" class="btn btn-primary ripple mag">
         <i class="fa-solid fa-envelope-open-text"></i> Buka Undangan
       </button>
@@ -530,6 +530,164 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
   })();
 </script>
 
+<!-- ========== COUPLE (CENTERED in TRANSPARENT CARD) ========== -->
+<section class="section" data-bg="#fff8ec,#f7ead2">
+  <div class="glass-card revealCard" id="coupleGlass">
+    <!-- Hero -->
+    <div class="hero c-anim">
+      <i class="fa-solid fa-heart" style="font-size:26px;color:#b07a3f"></i>
+      <h3 class="weare">We Are</h3>
+      <h2 class="getting">Getting Married!</h2>
+      <p class="doa">
+        Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan.
+        Ya Allah semoga ridho-Mu tercurah mengiringi pernikahan kami:
+      </p>
+    </div>
+
+    <!-- Ilham -->
+    <article class="profile c-anim">
+      <div class="avatar">
+        <span class="ph"><img src="assets/images/ilham.jpg" alt="Ilham"></span>
+      </div>
+      <h3 class="nama">Ilham Putra Permana</h3>
+      <p class="ket"><small>Putra dari</small><br><b>Bapak Mudro Irawan Bhakti (Alm)</b> & <b>Ibu Nur Wahyuni (Alm)</b></p>
+      <a class="ig" href="https://instagram.com/ilhampe" target="_blank" rel="noopener">
+        <i class="fa-brands fa-instagram"></i> @ilham.pe
+      </a>
+    </article>
+
+    <div class="ampersand c-anim">&amp;</div>
+
+    <!-- Sahitya -->
+    <article class="profile c-anim">
+      <div class="avatar">
+        <span class="ph"><img src="assets/images/tya.jpg" alt="Sahitya"></span>
+      </div>
+      <h3 class="nama">Sahitya Nashiroh</h3>
+      <p class="ket"><small>Putri dari</small><br><b>Bapak Budi Warsito</b> & <b>Ibu Partiana</b></p>
+      <a class="ig" href="https://instagram.com/sahityansrh" target="_blank" rel="noopener">
+        <i class="fa-brands fa-instagram"></i> @sahityansrh
+      </a>
+    </article>
+  </div>
+</section>
+
+<style>
+  /* ===== Transparent (Glass) Card ===== */
+  .glass-card{
+    position:relative; overflow:visible;
+    width:min(100% - 28px, 760px);
+    margin:16px auto; padding:18px 14px 20px;
+    border-radius:22px;
+    background: rgba(255,255,255,.45);
+    border:2px solid rgba(176,122,63,.55);            /* coklat transparan */
+    box-shadow: 0 14px 28px rgba(0,0,0,.10);
+    backdrop-filter: blur(8px) saturate(115%);
+    -webkit-backdrop-filter: blur(8px) saturate(115%);
+  }
+  .glass-card::before{ /* shine halus */
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background: radial-gradient(120% 100% at 50% -10%, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 55%);
+  }
+
+  /* ===== Typography & layout ===== */
+  #coupleGlass{ text-align:center }
+  #coupleGlass .weare{
+    margin:.4rem 0 0; font-family:'Playfair Display', serif; font-weight:400; font-size:22px;
+  }
+  #coupleGlass .getting{
+    margin:.2rem 0 .5rem; font-family:'Great Vibes', cursive; font-size:42px;
+  }
+  #coupleGlass .doa{ max-width:58ch; margin:0 auto 12px; opacity:.95; margin-bottom: 35px; }
+
+  .profile{ margin:10px 0 6px }
+  .profile .nama{ margin:.6rem 0 .2rem; font-family:'Playfair Display',serif; font-size:22px }
+  .profile .ket{ margin:0 0 .4rem }
+
+  /* ===== Avatar bulat + frame + bouquet ===== */
+  .avatar{ position:relative; width:214px; height:214px; margin:8px auto }
+  .avatar .ph{
+    position:absolute; inset:0; border-radius:999px; overflow:hidden;
+    border:6px solid #d9b98a;                        /* frame luar */
+    box-shadow: inset 0 0 0 3px #fffdf8, 0 10px 28px rgba(0,0,0,.10);
+    display:block;
+  }
+  .avatar img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    transform: scale(1.06) translateY(6px);
+    transition: transform 6s ease-out;
+  }
+  .profile:hover .avatar img{ transform: scale(1.10) translateY(0) }
+
+  /* Bouquet dekor (tidak terpotong karena ditempel di .avatar, bukan .ph) */
+  .avatar::before,
+  .avatar::after{
+    content:""; position:absolute; pointer-events:none;
+    background-image:url('https://e3k53m4o92i.exactdn.com/wp-content/uploads/2024/10/Garden-03-Bouquet.png?strip=all&lossy=1&ssl=1');
+    background-repeat:no-repeat; background-size:contain;
+    filter: drop-shadow(0 8px 16px rgba(217,185,138,.5));
+  }
+
+  .avatar::after{  /* atas kanan */
+    width:54%; aspect-ratio:1/1; right:-12%; top:-20%;  transform:rotate(-12deg);
+  }
+
+  /* IG pill */
+  .ig{
+    display:inline-flex; align-items:center; gap:8px; margin:.4rem 0 0;
+    padding:8px 12px; border-radius:999px; border:1px solid #b07a3f;
+    color:#6a4a2a; background:#fff; text-decoration:none; font-weight:600;
+    box-shadow:0 6px 14px rgba(176,122,63,.18);
+    transition: transform .2s, background .2s, box-shadow .2s;
+  }
+  .ig:hover{ transform:translateY(-1px) scale(1.03); background:#fffaf3 }
+  .ig:active{ transform:scale(.97) }
+  .ig i{ font-size:18px }
+
+  .ampersand{ font-family:'Playfair Display',serif; font-size:32px; color:#b07a3f; margin:6px 0 }
+
+  /* ===== Animations ===== */
+  .revealCard{ opacity:0; transform: translateY(14px) scale(.98); filter:blur(3px);
+    transition: transform .7s cubic-bezier(.22,.61,.36,1), opacity .7s, filter .7s; }
+  .revealCard.on{ opacity:1; transform:none; filter:none }
+
+  .c-anim{ opacity:0; transform: translateY(14px); filter: blur(3px);
+    transition: transform .75s cubic-bezier(.22,.61,.36,1), opacity .75s, filter .75s; }
+  .c-anim.on{ opacity:1; transform:none; filter:none }
+
+  /* Aksesibilitas */
+  @media (prefers-reduced-motion:reduce){
+    .revealCard,.c-anim{ transition:none !important; opacity:1; transform:none; filter:none }
+    .avatar img{ transition:none }
+  }
+</style>
+
+<script>
+  // Card + isi muncul berurutan saat terlihat; retrigger bila discroll balik
+  (function(){
+    const card = document.getElementById('coupleGlass');
+    if(!card) return;
+
+    const ioCard = new IntersectionObserver((e)=>{
+      e.forEach(x=>{
+        if(x.isIntersecting) card.classList.add('on');
+        else card.classList.remove('on');
+      });
+    }, {threshold:.15, rootMargin:'0px 0px -10% 0px'});
+    ioCard.observe(card);
+
+    const children = [...card.querySelectorAll('.c-anim')];
+    children.forEach((el,i)=> el.style.transitionDelay = (150 + i*110) + 'ms');
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting) e.target.classList.add('on');
+        else e.target.classList.remove('on');
+      });
+    }, {threshold:.15, rootMargin:'0px 0px -10% 0px'});
+    children.forEach(el=> io.observe(el));
+  })();
+</script>
 
 <!-- ===== SAVE THE DATE ===== -->
 <section class="section save center" data-bg="#fff4e1,#f7ead2">
