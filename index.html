@@ -349,46 +349,6 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
 
 
 <main>
-<script>
-(function () {
-  // Ambil "name" dari query (?name=), hash (#name=), atau path (/name=…)
-  function getInvitee() {
-    const href = window.location.href;
-    const url  = new URL(href);
-
-    // 1) querystring
-    let raw = url.searchParams.get('name') || url.searchParams.get('to');
-
-    // 2) hash (#name=…)
-    if (!raw && url.hash) {
-      const m = url.hash.match(/(?:^|[?&])(name|to)=([^&]+)/i);
-      if (m) raw = m[2];
-    }
-
-    // 3) pola /name=… di pathname
-    if (!raw) {
-      const m = location.pathname.match(/(?:^|\/)(?:name|to)=([^/?#]+)/i);
-      if (m) raw = m[1];
-    }
-
-    if (!raw) return "";
-
-    // decode: ganti + jadi spasi, decodeURIComponent, rapikan
-    try { raw = decodeURIComponent(raw.replace(/\+/g, " ")); } catch(e){}
-    raw = raw.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
-
-    return raw;
-  }
-
-  const target = document.getElementById('guest');
-  const name = getInvitee();
-
-  if (target && name) {
-    // aman (anti XSS) karena pakai textContent
-    target.textContent = "Kepada Yth. " + name;
-  }
-})();
-</script>
 
 <!-- ===== MUSIC BTN ===== -->
 <button class="music mag" id="musicBtn" aria-label="musik"><i class="fa-solid fa-music"></i></button>
@@ -398,6 +358,7 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
 </audio>
 
 <!-- ===== OPENING GATE ===== -->
+<!-- ===== GATE (auto-guest-name) ===== -->
 <div id="gate" role="dialog" aria-modal="true">
   <div class="gate">
     <div class="ph"></div>
@@ -412,6 +373,53 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
   </div>
 </div>
 
+<script>
+/* Auto isi "Kepada Yth." dari URL: ?name=..., #name=..., atau /name=... */
+(function () {
+  const el = document.getElementById('guest');
+  if (!el) return;
+
+  function getParamFromHash(hash) {
+    const h = hash.replace(/^#/, '');
+    const sp = new URLSearchParams(h.includes('=') && !h.includes('&') ? '?' + h : h);
+    return sp.get('name') || sp.get('to') || sp.get('guest') || '';
+  }
+
+  function getInvitee() {
+    const url = new URL(window.location.href);
+
+    // 1) ?name= / ?to= / ?guest=
+    let raw = url.searchParams.get('name') || url.searchParams.get('to') || url.searchParams.get('guest');
+
+    // 2) #name=... atau #...&name=...
+    if (!raw && url.hash) raw = getParamFromHash(url.hash);
+
+    // 3) /name=... atau /to=... di pathname
+    if (!raw) {
+      const m = url.pathname.match(/(?:^|\/)(?:name|to|guest)=([^/?#]+)/i);
+      if (m) raw = m[1];
+    }
+
+    if (!raw) return '';
+
+    // Decode + rapi
+    try { raw = decodeURIComponent(raw.replace(/\+/g, ' ')); } catch(e){}
+    raw = raw.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // Capitalize ringan (opsional)
+    if (raw.length <= 60) {
+      raw = raw.split(' ').map(w => w ? w[0].toUpperCase() + w.slice(1) : '').join(' ');
+    }
+    return raw;
+  }
+
+  const name = getInvitee();
+  if (name) el.textContent = 'Kepada Yth. ' + name;
+
+  // (Opsional) auto-klik buka undangan jika ada nama di URL:
+  if (name) document.getElementById('openBtn')?.click();
+})();
+</script>
 
 
 
