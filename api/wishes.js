@@ -1,4 +1,3 @@
-// api/wishes.js
 const mysql = require('mysql2/promise');
 
 let pool;
@@ -24,7 +23,7 @@ const T = process.env.DB_TABLE || 'wishes_ilham_sahitya';
 module.exports = async (req, res) => {
   const db = getPool();
 
-  // CORS sederhana (boleh kamu ganti whitelist)
+  // CORS sederhana
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -41,7 +40,7 @@ module.exports = async (req, res) => {
         [limit]
       );
       res.status(200).json(rows);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: 'DB_READ_FAILED' });
     }
     return;
@@ -65,7 +64,7 @@ module.exports = async (req, res) => {
         [r.insertId]
       );
       res.status(201).json(rows[0]);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: 'DB_WRITE_FAILED' });
     }
     return;

@@ -1,4 +1,3 @@
-// api/ping.js
 const mysql = require('mysql2/promise');
 
 module.exports = async (req, res) => {
