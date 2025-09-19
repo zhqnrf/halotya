@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       connectTimeout: 8000,
-      ssl: /^true$/i.test(process.env.DB_SSL || '') ? { rejectUnauthorized: false } : undefined,
+      ssl: /^true$/i.test(process.env.DB_SSL || '') ? { rejectUnauthorized: false } : undefined
     });
     const [rows] = await conn.query('SELECT 1 AS ok');
     await conn.end();

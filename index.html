@@ -1539,6 +1539,7 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
 
 
 <!-- ===== WISHES ===== -->
+<!-- ===== WISHES ===== -->
 <section class="section" data-bg="#fffdf7,#f2e6d6">
   <div class="center" style="margin-bottom:10px">
     <i class="fa-solid fa-comments" style="font-size:24px;color:#b07a3f"></i>
@@ -1552,7 +1553,7 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
       <div class="badge-in out"><b id="absenC">0</b> Tidak Hadir</div>
     </div>
 
-    <form class="form" id="wishForm">
+    <form class="form" id="wishForm" autocomplete="off">
       <input id="nama" placeholder="Nama" required/>
       <textarea id="ucapan" rows="3" placeholder="Ucapan" required></textarea>
       <select id="konfirmasi" required>
@@ -1560,73 +1561,63 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
         <option>Hadir</option>
         <option>Tidak Hadir</option>
       </select>
-      <button type="submit" class="ripple"><i class="fa-solid fa-paper-plane"></i> Kirim</button>
+      <button id="wishSubmit" type="submit" class="ripple">
+        <i class="fa-solid fa-paper-plane"></i> Kirim
+      </button>
     </form>
 
     <div id="wishList"></div>
   </div>
 </section>
+
 <style>
-  /* ===== Wishes list container ===== */
-#wishList{
-  position:relative;
-  max-height:260px;
-  overflow-y:auto;            /* hanya vertikal */
-  overflow-x:hidden;          /* cegah scrollbar horizontal */
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior:auto;       /* auto-scroll dihandle JS */
-  padding-bottom:4px;
-
-  /* sembunyikan scrollbar (FF/IE/WebKit) */
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE/Edge lama */
+.badge-in{
+  display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700;
+  border:1px solid #b07a3f; background:#fff; color:#6a4a2a;
+  box-shadow:0 6px 14px rgba(176,122,63,.12);
 }
-#wishList::-webkit-scrollbar{ width:0; height:0; } /* WebKit */
+.badge-in.in{ border-color:#2e7d32; color:#1b5e20; background:#e8f5e9 }
+.badge-in.out{ border-color:#b00020; color:#7a0015; background:#ffebee }
 
-/* Kartu komentar */
+#wishList{
+  position:relative; max-height:260px; overflow-y:auto; overflow-x:hidden;
+  -webkit-overflow-scrolling: touch; scroll-behavior:auto; padding-bottom:4px;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+#wishList::-webkit-scrollbar{ width:0; height:0 }
+
 #wishList .card{
-  margin:8px 0;
-  background:#fffefb;
-  border:2px solid #b07a3f;         /* border coklat */
-  border-radius:12px;
-  padding:10px 12px;
-  box-shadow:0 8px 18px rgba(0,0,0,.05), inset 0 0 0 1px rgba(255,255,255,.6);
-  transform-origin:center;
-  transform:translateZ(0) scale(1);
+  margin:8px 0; background:#fffefb; border:2px solid #b07a3f; border-radius:12px;
+  padding:10px 12px; box-shadow:0 8px 18px rgba(0,0,0,.05), inset 0 0 0 1px rgba(255,255,255,.6);
+  transform-origin:center; transform:translateZ(0) scale(1);
   transition: transform .18s cubic-bezier(.22,.61,.36,1), box-shadow .2s, filter .2s;
   will-change: transform;
 }
-#wishList .card:hover{
-  transform: scale(1.012);          /* zoom kecil: tidak bikin scrollbar */
-  box-shadow:0 12px 26px rgba(0,0,0,.10);
-  filter:saturate(1.03);
-}
+#wishList .card:hover{ transform: scale(1.012); box-shadow:0 12px 26px rgba(0,0,0,.10); filter:saturate(1.03) }
 #wishList .card:active{ transform: scale(.992) }
 
-/* Biar teks kebaca di bg krem */
 #wishList b, #wishList p, #wishList small{
   text-shadow:0 1px 0 rgba(255,255,255,.9), 0 0 6px rgba(255,255,255,.4);
 }
 
-/* Fade lembut atas/bawah (opsional) */
-#wishList::before,
-#wishList::after{
-  content:"";
-  position:sticky; left:0; right:0; z-index:2; pointer-events:none; display:block; height:16px;
+#wishList::before, #wishList::after{
+  content:""; position:sticky; left:0; right:0; z-index:2; pointer-events:none; display:block; height:16px;
 }
-#wishList::before{ top:-1;    background:linear-gradient(#fff0, #fffdf7); }
-#wishList::after { bottom:-1; background:linear-gradient(#f2e6d6, #0000); }
+#wishList::before{ top:0; background:linear-gradient(#fff0, #fffdf7) }
+#wishList::after { bottom:0; background:linear-gradient(#f2e6d6, #0000) }
 
 @media (prefers-reduced-motion: reduce){
   #wishList::before, #wishList::after{ display:none }
-  #wishList .card{ transition:none; transform:none; }
+  #wishList .card{ transition:none; transform:none }
 }
-
 </style>
+
 <script>
-/* ===== Wishes local + auto-scroll ===== */
-const form = document.getElementById('wishForm'),
-      list = document.getElementById('wishList');
+const API_URL = '/api/wishes';  // fungsi API di project Vercel yang sama
+
+const form = document.getElementById('wishForm');
+const list = document.getElementById('wishList');
+const submitBtn = document.getElementById('wishSubmit');
 let hadir = 0, absen = 0;
 
 function updateStat(){
@@ -1634,85 +1625,100 @@ function updateStat(){
   document.getElementById('absenC').textContent = absen;
 }
 
-function render(item, scrollTop = true){
-  const box = document.createElement('div'); box.className = 'card';
-  box.innerHTML = `
-    <b>${item.nama}</b> <small style="opacity:.7">• ${new Date(item.t).toLocaleString('id-ID')}</small>
-    <p style="margin:.4rem 0 0;white-space:pre-wrap">${item.u}</p>
-    <span class="badge-in ${item.k==='Hadir'?'in':'out'}">${item.k}</span>`;
-  list.prepend(box);
-  if (scrollTop) list.scrollTo({ top:0, behavior:'smooth' });
-  fillUntilScrollable();                 // jaga supaya bisa auto-scroll
+function esc(s=''){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+
+function cardHTML(item){
+  const nama = esc(item.name || item.nama || '');
+  const msg  = esc(item.message || item.u || '');
+  const st   = item.status || item.k || '';
+  const tval = item.created_at || item.t || Date.now();
+  const t    = new Date(tval).toLocaleString('id-ID');
+  return `<div class="card">
+    <b>${nama}</b> <small style="opacity:.7">• ${t}</small>
+    <p style="margin:.4rem 0 0;white-space:pre-wrap">${msg}</p>
+    <span class="badge-in ${st==='Hadir'?'in':'out'}">${esc(st)}</span>
+  </div>`;
 }
 
-form.addEventListener('submit', e=>{
+function prependItem(item, scrollTop = true){
+  list.insertAdjacentHTML('afterbegin', cardHTML(item));
+  const st = (item.status || item.k || '');
+  if (st === 'Hadir') hadir++; else if (st === 'Tidak Hadir') absen++;
+  updateStat();
+  if (scrollTop) list.scrollTo({ top:0, behavior:'smooth' });
+  fillUntilScrollable();
+}
+
+async function apiGet(){
+  const r = await fetch(API_URL + '?limit=100', { method:'GET', cache:'no-store' });
+  if(!r.ok) return [];
+  return r.json();
+}
+async function apiPost(payload){
+  const r = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  if(!r.ok) throw new Error('POST failed');
+  return r.json();
+}
+
+(async function loadInitial(){
+  try{
+    const data = await apiGet();
+    if (Array.isArray(data) && data.length){
+      list.innerHTML = data.map(cardHTML).join('');
+      hadir = data.filter(x=>x.status==='Hadir').length;
+      absen = data.filter(x=>x.status==='Tidak Hadir').length;
+      updateStat();
+    }
+    fillUntilScrollable();
+  }catch(e){ console.warn(e) }
+})();
+
+form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const nama = document.getElementById('nama').value.trim();
   const u    = document.getElementById('ucapan').value.trim();
   const k    = document.getElementById('konfirmasi').value;
   if(!nama || !u || !k) return;
-  render({ nama, u, k, t: Date.now() }, true);
-  if(k==='Hadir') hadir++; else absen++;
-  updateStat();
-  form.reset();
+
+  submitBtn.disabled = true; submitBtn.style.opacity = .7;
+  try{
+    const saved = await apiPost({ name:nama, message:u, status:k });
+    prependItem(saved, true);
+    form.reset();
+  }catch(err){ alert('Gagal kirim, coba lagi.'); }
+  submitBtn.disabled = false; submitBtn.style.opacity = 1;
 });
 
-/* ===== Auto-scroll halus + loop, meski item sedikit ===== */
-let autoScroll = true, rafId = 0, lastTs = 0, pauseTimer = null;
-const SPEED = 18; // px/detik
+/* Auto-scroll looping */
+let autoScroll = true, lastTs = 0, pauseTimer = null;
+const SPEED = 18; // px/dtk
 
-// Gandakan isi sampai tinggi > container → supaya bisa jalan walau cuma 1-2 item
 function fillUntilScrollable(){
-  if (!list) return;
-  if (list.children.length === 0) return;
+  if (!list || !list.children.length) return;
   let guard = 0;
   while (list.scrollHeight <= list.clientHeight && guard < 20){
-    // clone semua anak sekali putaran
-    const clones = [...list.children].map(n => {
-      const c = n.cloneNode(true);
-      c.dataset.clone = '1';
-      return c;
-    });
+    const clones = [...list.children].map(n => { const c = n.cloneNode(true); c.dataset.clone = '1'; return c; });
     clones.forEach(c => list.appendChild(c));
     guard++;
   }
 }
-fillUntilScrollable(); // panggil saat load juga
-
 function loop(ts){
-  if(!lastTs) lastTs = ts;
-  const dt = (ts - lastTs) / 1000; lastTs = ts;
-
+  if(!lastTs) lastTs = ts; const dt=(ts-lastTs)/1000; lastTs = ts;
   if (autoScroll && list && list.scrollHeight > list.clientHeight){
     const max = list.scrollHeight - list.clientHeight;
-    let next = list.scrollTop + SPEED * dt;
-    if (next >= max - 0.5) next = 0;    // loop kembali ke atas
-    list.scrollTop = next;
+    let next = list.scrollTop + SPEED * dt; if (next >= max - 0.5) next = 0; list.scrollTop = next;
   }
-  rafId = requestAnimationFrame(loop);
+  requestAnimationFrame(loop);
 }
-
-// pause helper
-function pauseAuto(ms=2000){
-  autoScroll = false;
-  clearTimeout(pauseTimer);
-  pauseTimer = setTimeout(()=> autoScroll = true, ms);
-}
-
-// interaksi user = pause sementara
-list.addEventListener('mouseenter', ()=> pauseAuto(1e9));   // berhenti selama hover
+function pauseAuto(ms=2000){ autoScroll=false; clearTimeout(pauseTimer); pauseTimer=setTimeout(()=>autoScroll=true, ms); }
+list.addEventListener('mouseenter', ()=> pauseAuto(1e9));
 list.addEventListener('mouseleave', ()=> pauseAuto(800));
 list.addEventListener('wheel',      ()=> pauseAuto(1500), {passive:true});
 list.addEventListener('touchstart', ()=> pauseAuto(1500), {passive:true});
 list.addEventListener('touchend',   ()=> pauseAuto(1200), {passive:true});
-
-// mulai loop
-if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
-  requestAnimationFrame(loop);
-}
-
-
+if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) requestAnimationFrame(loop);
 </script>
+
 
 <!-- ===== FOOTER ===== -->
 <footer class="section center" data-bg="#fff6e6,#f0e1c8">

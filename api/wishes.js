@@ -1,11 +1,11 @@
-// api/wishes.js  (CommonJS agar simple di Vercel Functions)
+// api/wishes.js
 const mysql = require('mysql2/promise');
 
 let pool;
 function getPool() {
   if (!pool) {
     pool = mysql.createPool({
-      host: process.env.DB_HOST,                 // <-- HARUS IP/HOSTNAME PUBLIK
+      host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT || 3306),
       user: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
@@ -13,7 +13,7 @@ function getPool() {
       waitForConnections: true,
       connectionLimit: 5,
       connectTimeout: 10000,
-      ssl: /^true$/i.test(process.env.DB_SSL || '') ? { rejectUnauthorized: false } : undefined,
+      ssl: /^true$/i.test(process.env.DB_SSL || '') ? { rejectUnauthorized: false } : undefined
     });
   }
   return pool;
@@ -24,15 +24,14 @@ const T = process.env.DB_TABLE || 'wishes_ilham_sahitya';
 module.exports = async (req, res) => {
   const db = getPool();
 
-  // Optional CORS (kalau front-end beda origin)
+  // CORS sederhana (boleh kamu ganti whitelist)
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.status(204).end();
-    return;
+    res.status(204).end(); return;
   }
-  res.setHeader('Access-Control-Allow-Origin', '*'); // atau batasi ke domainmu
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (req.method === 'GET') {
     try {
@@ -43,7 +42,6 @@ module.exports = async (req, res) => {
       );
       res.status(200).json(rows);
     } catch (e) {
-      console.error('GET error:', e.message);
       res.status(500).json({ error: 'DB_READ_FAILED' });
     }
     return;
@@ -52,13 +50,10 @@ module.exports = async (req, res) => {
   if (req.method === 'POST') {
     try {
       let body = req.body;
-      if (typeof body === 'string') {
-        try { body = JSON.parse(body); } catch {}
-      }
+      if (typeof body === 'string') { try { body = JSON.parse(body); } catch {} }
       const { name, message, status } = body || {};
       if (!name || !message || !['Hadir','Tidak Hadir'].includes(status)) {
-        res.status(400).json({ error: 'BAD_REQUEST' });
-        return;
+        res.status(400).json({ error: 'BAD_REQUEST' }); return;
       }
       const nm = String(name).slice(0, 100);
       const [r] = await db.query(
@@ -71,7 +66,6 @@ module.exports = async (req, res) => {
       );
       res.status(201).json(rows[0]);
     } catch (e) {
-      console.error('POST error:', e.message);
       res.status(500).json({ error: 'DB_WRITE_FAILED' });
     }
     return;
