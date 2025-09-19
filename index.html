@@ -1539,185 +1539,212 @@ footer h3{font-family:"Great Vibes",cursive;font-size:44px;margin:0 0 8px;color:
 
 
 <!-- ===== WISHES ===== -->
-<!-- ===== WISHES ===== -->
-<section class="section" data-bg="#fffdf7,#f2e6d6">
-  <div class="center" style="margin-bottom:10px">
-    <i class="fa-solid fa-comments" style="font-size:24px;color:#b07a3f"></i>
-    <h3 style="margin:6px 0 0;font-family:'Playfair Display',serif">Wishes</h3>
-    <div style="opacity:.75">Ucapan Selamat & Do'a</div>
+<!-- ===================== WISHES (SELF-CONTAINED) ===================== -->
+<section class="wishes-sec" id="wishesSec">
+  <div class="ws-head">
+    <i class="fa-solid fa-comments"></i>
+    <h3>Wishes</h3>
+    <div class="ws-sub">Ucapan Selamat & Do'a</div>
   </div>
 
-  <div class="card reveal">
-    <div class="center" style="display:flex;gap:10px;justify-content:center;margin-bottom:8px">
-      <div class="badge-in in"><b id="hadirC">0</b> Hadir</div>
-      <div class="badge-in out"><b id="absenC">0</b> Tidak Hadir</div>
+  <div class="ws-card">
+    <div class="ws-stats">
+      <div class="badge-in in"><b id="wsHadir">0</b> Hadir</div>
+      <div class="badge-in out"><b id="wsAbsen">0</b> Tidak Hadir</div>
     </div>
 
-    <form class="form" id="wishForm" autocomplete="off">
-      <input id="nama" placeholder="Nama" required/>
-      <textarea id="ucapan" rows="3" placeholder="Ucapan" required></textarea>
-      <select id="konfirmasi" required>
+    <form class="ws-form" id="wsForm" autocomplete="off">
+      <input id="wsNama" placeholder="Nama" required/>
+      <textarea id="wsUcapan" rows="3" placeholder="Ucapan" required></textarea>
+      <select id="wsKonf" required>
         <option value="" disabled selected>Konfirmasi Kehadiran</option>
         <option>Hadir</option>
         <option>Tidak Hadir</option>
       </select>
-      <button id="wishSubmit" type="submit" class="ripple">
-        <i class="fa-solid fa-paper-plane"></i> Kirim
-      </button>
+      <button type="submit"><i class="fa-solid fa-paper-plane"></i> Kirim</button>
     </form>
 
-    <div id="wishList"></div>
+    <div id="wsList" class="ws-list"></div>
+
+    <!-- DEBUG LOG PANEL -->
+    <details class="ws-log">
+      <summary>LOG</summary>
+      <pre id="wsLogPre">init…</pre>
+    </details>
   </div>
 </section>
 
+<!-- ====== STYLE (scoped) ====== -->
 <style>
-.badge-in{
-  display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700;
-  border:1px solid #b07a3f; background:#fff; color:#6a4a2a;
-  box-shadow:0 6px 14px rgba(176,122,63,.12);
-}
-.badge-in.in{ border-color:#2e7d32; color:#1b5e20; background:#e8f5e9 }
-.badge-in.out{ border-color:#b00020; color:#7a0015; background:#ffebee }
+  .wishes-sec{ --cream:#fffdf7; --cream2:#f2e6d6; --brown:#b07a3f; --text:#3a332a;
+    padding:18px 16px 28px; max-width:760px; margin:0 auto; color:var(--text)}
+  .wishes-sec .ws-head{ text-align:center; margin-bottom:8px }
+  .wishes-sec .ws-head i{ color:var(--brown); font-size:24px }
+  .wishes-sec .ws-head h3{ margin:6px 0 2px; font-family:"Playfair Display",serif }
+  .wishes-sec .ws-sub{ opacity:.75 }
 
-#wishList{
-  position:relative; max-height:260px; overflow-y:auto; overflow-x:hidden;
-  -webkit-overflow-scrolling: touch; scroll-behavior:auto; padding-bottom:4px;
-  scrollbar-width:none; -ms-overflow-style:none;
-}
-#wishList::-webkit-scrollbar{ width:0; height:0 }
+  .wishes-sec .ws-card{ background:#fffefb; border:2px solid var(--brown);
+    border-radius:14px; box-shadow:0 8px 18px rgba(0,0,0,.06), inset 0 0 0 1px rgba(255,255,255,.6);
+    padding:14px 14px 16px }
 
-#wishList .card{
-  margin:8px 0; background:#fffefb; border:2px solid #b07a3f; border-radius:12px;
-  padding:10px 12px; box-shadow:0 8px 18px rgba(0,0,0,.05), inset 0 0 0 1px rgba(255,255,255,.6);
-  transform-origin:center; transform:translateZ(0) scale(1);
-  transition: transform .18s cubic-bezier(.22,.61,.36,1), box-shadow .2s, filter .2s;
-  will-change: transform;
-}
-#wishList .card:hover{ transform: scale(1.012); box-shadow:0 12px 26px rgba(0,0,0,.10); filter:saturate(1.03) }
-#wishList .card:active{ transform: scale(.992) }
+  .wishes-sec .ws-stats{ display:flex; gap:10px; justify-content:center; margin-bottom:8px }
+  .wishes-sec .badge-in{ display:inline-block; border:2px solid var(--brown); border-radius:999px;
+    padding:6px 12px; font-size:14px; background:#fffefb }
+  .wishes-sec .badge-in.in{ background:#eaf7ef; border-color:#74b082 }
+  .wishes-sec .badge-in.out{ background:#fef0f0; border-color:#e8a6a6 }
 
-#wishList b, #wishList p, #wishList small{
-  text-shadow:0 1px 0 rgba(255,255,255,.9), 0 0 6px rgba(255,255,255,.4);
-}
+  .wishes-sec .ws-form{ display:grid; gap:10px; margin-top:8px }
+  .wishes-sec .ws-form input,
+  .wishes-sec .ws-form textarea,
+  .wishes-sec .ws-form select{
+    padding:12px; border:2px solid #d9c5a6; border-radius:10px; background:#fff; font-size:15px
+  }
+  .wishes-sec .ws-form textarea{ resize:vertical }
+  .wishes-sec .ws-form button{ border:none; background:var(--brown); color:#fff;
+    border-radius:12px; padding:12px 14px; font-weight:600; cursor:pointer }
+  .wishes-sec .ws-form button:active{ transform:scale(.98) }
 
-#wishList::before, #wishList::after{
-  content:""; position:sticky; left:0; right:0; z-index:2; pointer-events:none; display:block; height:16px;
-}
-#wishList::before{ top:0; background:linear-gradient(#fff0, #fffdf7) }
-#wishList::after { bottom:0; background:linear-gradient(#f2e6d6, #0000) }
+  /* LIST */
+  .wishes-sec .ws-list{ position:relative; max-height:260px; overflow-y:auto; overflow-x:hidden;
+    -webkit-overflow-scrolling:touch; scroll-behavior:auto; padding-bottom:4px;
+    scrollbar-width:none; -ms-overflow-style:none }
+  .wishes-sec .ws-list::-webkit-scrollbar{ width:0; height:0 }
 
-@media (prefers-reduced-motion: reduce){
-  #wishList::before, #wishList::after{ display:none }
-  #wishList .card{ transition:none; transform:none }
-}
+  .wishes-sec .ws-list .card{ margin:8px 0; background:#fffefb; border:2px solid var(--brown);
+    border-radius:12px; padding:10px 12px; box-shadow:0 8px 18px rgba(0,0,0,.05), inset 0 0 0 1px rgba(255,255,255,.6);
+    transform:translateZ(0) scale(1); transition:transform .18s cubic-bezier(.22,.61,.36,1), box-shadow .2s, filter .2s }
+  .wishes-sec .ws-list .card:hover{ transform:scale(1.012); box-shadow:0 12px 26px rgba(0,0,0,.10); filter:saturate(1.03) }
+  .wishes-sec .ws-list .card:active{ transform:scale(.992) }
+  .wishes-sec .ws-list b, .wishes-sec .ws-list p, .wishes-sec .ws-list small{
+    text-shadow:0 1px 0 rgba(255,255,255,.9), 0 0 6px rgba(255,255,255,.35) }
+
+  /* Fade lembut */
+  .wishes-sec .ws-list::before, .wishes-sec .ws-list::after{
+    content:""; position:sticky; left:0; right:0; z-index:2; pointer-events:none; display:block; height:16px }
+  .wishes-sec .ws-list::before{ top:-1; background:linear-gradient(#fff0, var(--cream)) }
+  .wishes-sec .ws-list::after{ bottom:-1; background:linear-gradient(var(--cream2), #0000) }
+
+  /* LOG PANEL */
+  .wishes-sec .ws-log{ margin-top:10px; }
+  .wishes-sec #wsLogPre{ max-height:160px; overflow:auto; background:#111; color:#d9f7d9; padding:10px;
+    border-radius:8px; font:12px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace }
+</style>
+
+<!-- OPTIONAL: fallback CSS untuk reveal -->
+<style>
+  .reveal{opacity:0; transform:translateY(14px); filter:blur(2px);
+    transition:transform .6s cubic-bezier(.22,.61,.36,1), opacity .6s, filter .6s}
+  .reveal.on{opacity:1; transform:none; filter:none}
 </style>
 
 <script>
-const API_URL = 'https://rsudlg.kedirikab.go.id/api/wishes.php';  // fungsi API di project Vercel yang sama
+(() => {
+  const API_URL = 'https://rsudslg.kedirikab.go.id/api/wishes.php';
 
-const form = document.getElementById('wishForm');
-const list = document.getElementById('wishList');
-const submitBtn = document.getElementById('wishSubmit');
-let hadir = 0, absen = 0;
+  // ---- IntersectionObserver helper (rootMargin aman) ----
+  function makeObserver(cb, options={}){
+    const raw = (options.rootMargin ?? '0px 0px -12% 0px').toString();
+    const safe = raw.trim().split(/\s+/).map(v=>{
+      if (/^-?\d+(\.\d+)?(px|%)$/.test(v)) return v;
+      if (v==='0') return '0px';
+      const n=parseFloat(v); return Number.isFinite(n)?`${n}px`:'0px';
+    }).join(' ');
+    return new IntersectionObserver(cb, { ...options, rootMargin: safe });
+  }
+  // Reveal dasar (opsional)
+  document.querySelectorAll('.reveal').forEach(el=>{
+    (makeObserver(es=>es.forEach(e=>{ if(e.isIntersecting){el.classList.add('on')}}),{threshold:.2})).observe(el);
+  });
 
-function updateStat(){
-  document.getElementById('hadirC').textContent = hadir;
-  document.getElementById('absenC').textContent = absen;
-}
+  // ---- Wishes ----
+  const form = document.getElementById('wishForm');
+  const list = document.getElementById('wishList');
+  const elHadir = document.getElementById('hadirC');
+  const elAbsen = document.getElementById('absenC');
+  const inputNama = document.getElementById('nama');
+  const inputUcapan = document.getElementById('ucapan');
+  const selectKonf = document.getElementById('konfirmasi');
 
-function esc(s=''){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+  if (!form || !list || !elHadir || !elAbsen || !inputNama || !inputUcapan || !selectKonf) {
+    console.warn('Wishes: elemen id wajib tidak lengkap');
+    return;
+  }
 
-function cardHTML(item){
-  const nama = esc(item.name || item.nama || '');
-  const msg  = esc(item.message || item.u || '');
-  const st   = item.status || item.k || '';
-  const tval = item.created_at || item.t || Date.now();
-  const t    = new Date(tval).toLocaleString('id-ID');
-  return `<div class="card">
-    <b>${nama}</b> <small style="opacity:.7">• ${t}</small>
-    <p style="margin:.4rem 0 0;white-space:pre-wrap">${msg}</p>
-    <span class="badge-in ${st==='Hadir'?'in':'out'}">${esc(st)}</span>
-  </div>`;
-}
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+  function render(item, prepend=true){
+    const card=document.createElement('div');
+    card.className='card';
+    card.style.cssText='margin:8px 0;border:2px solid #b07a3f;border-radius:12px;padding:10px 12px;background:#fffefb;box-shadow:0 8px 18px rgba(0,0,0,.05), inset 0 0 0 1px rgba(255,255,255,.6)';
+    const when=item.created_at||item.t||Date.now();
+    card.innerHTML=`
+      <b>${esc(item.name)}</b>
+      <small style="opacity:.7">• ${new Date(when).toLocaleString('id-ID')}</small>
+      <p style="margin:.4rem 0 0;white-space:pre-wrap">${esc(item.message)}</p>
+      <span class="badge-in ${item.status==='Hadir'?'in':'out'}">${esc(item.status)}</span>`;
+    prepend?list.prepend(card):list.append(card);
+  }
+  function recount(items){
+    let h=0,a=0; items.forEach(x=>x.status==='Hadir'?h++:a++);
+    elHadir.textContent=String(h); elAbsen.textContent=String(a);
+  }
+  async function apiGet(){
+    const r=await fetch(API_URL+'?limit=100',{mode:'cors',cache:'no-store'});
+    if(!r.ok) throw new Error('GET_'+r.status);
+    return r.json();
+  }
+  async function apiPost(payload){
+    const r=await fetch(API_URL,{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!r.ok) throw new Error('POST_'+r.status);
+    return r.json();
+  }
 
-function prependItem(item, scrollTop = true){
-  list.insertAdjacentHTML('afterbegin', cardHTML(item));
-  const st = (item.status || item.k || '');
-  if (st === 'Hadir') hadir++; else if (st === 'Tidak Hadir') absen++;
-  updateStat();
-  if (scrollTop) list.scrollTo({ top:0, behavior:'smooth' });
-  fillUntilScrollable();
-}
+  // load awal
+  (async()=>{
+    try{
+      const data = await apiGet();
+      // data terbaru sudah paling atas; kita append dari belakang → atas tetap terbaru
+      for(let i=data.length-1;i>=0;i--) render(data[i], true);
+      recount(data);
+      startAutoScroll();
+    }catch(e){ console.error('Wishes init:', e); alert('Gagal memuat wishes. Cek CORS di server.'); }
+  })();
 
-async function apiGet(){
-  const r = await fetch(API_URL + '?limit=100', { method:'GET', cache:'no-store' });
-  if(!r.ok) return [];
-  return r.json();
-}
-async function apiPost(payload){
-  const r = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-  if(!r.ok) throw new Error('POST failed');
-  return r.json();
-}
+  // submit
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const nama=inputNama.value.trim(), ucapan=inputUcapan.value.trim(), konf=selectKonf.value;
+    if(!nama||!ucapan||!konf) return;
+    try{
+      const saved=await apiPost({name:nama,message:ucapan,status:konf});
+      render(saved,true);
+      if(saved.status==='Hadir'){ elHadir.textContent=String((+elHadir.textContent||0)+1); }
+      else { elAbsen.textContent=String((+elAbsen.textContent||0)+1); }
+      list.scrollTo({top:0,behavior:'smooth'}); form.reset();
+    }catch(e){ console.error('Wishes submit:', e); alert('Kirim gagal.'); }
+  });
 
-(async function loadInitial(){
-  try{
-    const data = await apiGet();
-    if (Array.isArray(data) && data.length){
-      list.innerHTML = data.map(cardHTML).join('');
-      hadir = data.filter(x=>x.status==='Hadir').length;
-      absen = data.filter(x=>x.status==='Tidak Hadir').length;
-      updateStat();
+  // auto-scroll lembut
+  function startAutoScroll(){
+    let auto=true,last=0; const SPEED=18;
+    function loop(ts){ if(!last) last=ts; const dt=(ts-last)/1000; last=ts;
+      if(auto&&list.scrollHeight>list.clientHeight){
+        const max=list.scrollHeight-list.clientHeight;
+        let next=list.scrollTop+SPEED*dt; if(next>=max-0.5) next=0; list.scrollTop=next;
+      } requestAnimationFrame(loop);
     }
-    fillUntilScrollable();
-  }catch(e){ console.warn(e) }
+    ['mouseenter','wheel','touchstart'].forEach(ev=>list.addEventListener(ev,()=>{auto=false},{passive:true}));
+    ['mouseleave','touchend'].forEach(ev=>list.addEventListener(ev,()=>{auto=true},{passive:true}));
+    requestAnimationFrame(loop);
+  }
 })();
-
-form.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const nama = document.getElementById('nama').value.trim();
-  const u    = document.getElementById('ucapan').value.trim();
-  const k    = document.getElementById('konfirmasi').value;
-  if(!nama || !u || !k) return;
-
-  submitBtn.disabled = true; submitBtn.style.opacity = .7;
-  try{
-    const saved = await apiPost({ name:nama, message:u, status:k });
-    prependItem(saved, true);
-    form.reset();
-  }catch(err){ alert('Gagal kirim, coba lagi.'); }
-  submitBtn.disabled = false; submitBtn.style.opacity = 1;
-});
-
-/* Auto-scroll looping */
-let autoScroll = true, lastTs = 0, pauseTimer = null;
-const SPEED = 18; // px/dtk
-
-function fillUntilScrollable(){
-  if (!list || !list.children.length) return;
-  let guard = 0;
-  while (list.scrollHeight <= list.clientHeight && guard < 20){
-    const clones = [...list.children].map(n => { const c = n.cloneNode(true); c.dataset.clone = '1'; return c; });
-    clones.forEach(c => list.appendChild(c));
-    guard++;
-  }
-}
-function loop(ts){
-  if(!lastTs) lastTs = ts; const dt=(ts-lastTs)/1000; lastTs = ts;
-  if (autoScroll && list && list.scrollHeight > list.clientHeight){
-    const max = list.scrollHeight - list.clientHeight;
-    let next = list.scrollTop + SPEED * dt; if (next >= max - 0.5) next = 0; list.scrollTop = next;
-  }
-  requestAnimationFrame(loop);
-}
-function pauseAuto(ms=2000){ autoScroll=false; clearTimeout(pauseTimer); pauseTimer=setTimeout(()=>autoScroll=true, ms); }
-list.addEventListener('mouseenter', ()=> pauseAuto(1e9));
-list.addEventListener('mouseleave', ()=> pauseAuto(800));
-list.addEventListener('wheel',      ()=> pauseAuto(1500), {passive:true});
-list.addEventListener('touchstart', ()=> pauseAuto(1500), {passive:true});
-list.addEventListener('touchend',   ()=> pauseAuto(1200), {passive:true});
-if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) requestAnimationFrame(loop);
 </script>
+
+
+
+
+<!-- ===================== /WISHES ===================== -->
+
+
 
 
 <!-- ===== FOOTER ===== -->
